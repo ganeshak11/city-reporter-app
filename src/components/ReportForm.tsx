@@ -59,12 +59,14 @@ export default function ReportForm() {
             setLocationError(null);
           },
           (error) => {
-            setLocationError("Unable to get your location. Please enable location services.");
-            console.error("Error getting location:", error);
-          }
+            setLocationError("Unable to get location. Please select manually on map.");
+            setUseManualLocation(true);
+          },
+          { timeout: 10000, enableHighAccuracy: false }
         );
       } else {
-        setLocationError("Geolocation is not supported by your browser");
+        setLocationError("Geolocation not supported. Please select manually.");
+        setUseManualLocation(true);
       }
     }
   }, [useManualLocation]);

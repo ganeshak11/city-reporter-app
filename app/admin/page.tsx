@@ -1,23 +1,44 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { db } from "@/src/utils/firebase";
 import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
+import { useAuth } from "@/src/features/AuthContext";
 import MapView from "@/src/components/MapView";
 import IssueCount from "@/src/components/IssueCount";
 
 const STATUS_OPTIONS = ["Open", "In Progress", "Resolved"];
+const ADMIN_EMAILS = ["jeevan@admin.com"]; // Add your admin emails here
 
 export default function AdminPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const [reports, setReports] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!loading) {
+      console.log("User email:", user?.email);
+      console.log("Admin emails:", ADMIN_EMAILS);
+      console.log("Is admin:", ADMIN_EMAILS.includes(user?.email || ""));
+      
+      if (!user) {
+        router.push("/signin");
+        return;
+      }
+      if (!ADMIN_EMAILS.includes(user.email || "")) {
+        router.push("/dashboard");
+      }
+    }
+  }, [user, loading, router]);
+
   const fetchReports = async () => {
-    setLoading(true);
+    setDataLoading(true);
     const snapshot = await getDocs(collection(db, "reports"));
     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setReports(data);
-    setLoading(false);
+    setDataLoading(false);
   };
 
   useEffect(() => {
@@ -31,6 +52,18 @@ export default function AdminPage() {
     setUpdating(null);
   };
 
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="text-indigo-600">Loading...</div>
+      </main>
+    );
+  }
+
+  if (!user || !ADMIN_EMAILS.includes(user.email || "")) {
+    return null;
+  }
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-8">
       <h1 className="text-3xl font-bold text-indigo-700 mb-4">Admin Panel</h1>
@@ -41,7 +74,7 @@ export default function AdminPage() {
           <MapView />
         </div>
       </div>
-      {loading ? (
+      {dataLoading ? (
         <div>Loading reports...</div>
       ) : (
         <div className="overflow-x-auto w-full max-w-4xl">
