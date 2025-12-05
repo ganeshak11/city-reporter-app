@@ -3,13 +3,13 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAk3lTFXdRGT7Wy5ubEKub5pQhKw8Cmtmg",
-  authDomain: "city-reporter11.firebaseapp.com",
-  projectId: "city-reporter11",
-  storageBucket: "city-reporter11.appspot.com",
-  messagingSenderId: "239239552066",
-  appId: "1:239239552066:web:75667d68fb185086d4a1db",
-  measurementId: "G-WM93CZMT0B"
+  apiKey: "YOUR_NEW_API_KEY",
+  authDomain: "YOUR_NEW_PROJECT.firebaseapp.com",
+  projectId: "YOUR_NEW_PROJECT_ID",
+  storageBucket: "YOUR_NEW_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_NEW_SENDER_ID",
+  appId: "YOUR_NEW_APP_ID",
+  measurementId: "YOUR_NEW_MEASUREMENT_ID"
 };
 
 export const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
